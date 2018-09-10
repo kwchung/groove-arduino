@@ -19,15 +19,40 @@ void setup()
   pinMode(echoPin, INPUT);
   pinMode(9, OUTPUT);  // this pin will pull the HC-05 pin 34 (key pin) HIGH to switch module to AT mode
   digitalWrite(9, HIGH);
-  Serial.begin(38400);
+  Serial.begin(9600);
   Serial.println("Enter AT commands:");
-  BT.begin(38400);  // HC-05 default speed in AT command more
+  BT.begin(9600);  // HC-05 default speed in AT command more
 }
 
 void loop()
 {
-  calcDis();
+  //  calcDis();
+  bluetooth();
+}
 
+void bluetooth()
+{
+  if (Serial.available())
+  {
+    String inputString = "";
+    while (Serial.available()) {
+      delay(5);
+      char c = (char)Serial.read();
+      inputString += (c == '\r' || c == '\n') ? ' ' : c;
+    }
+    BT.println(inputString);
+  }
+
+  if (BT.available())
+  {
+    String inputString = "";
+    while (BT.available()) {
+      delay(5);
+      char c = (char)BT.read();
+      inputString += (c == '\r' || c == '\n') ? ' ' : c;
+    }
+    Serial.println(inputString);
+  }
 }
 
 void calcDis()
@@ -42,41 +67,15 @@ void calcDis()
 
   x0 = distance;
   v0 = velocity;
-  //Serial.print("distance = ");
+  //  Serial.print("distance = ");
   //  Serial.print("E");
   //  Serial.print(distance);//送出距離
-  //Serial.print(" velocity = ");
+  //  Serial.print(" velocity = ");
   //  Serial.print(",");
-//  Serial.print(velocity);//送出速度
+  //  Serial.print(velocity);//送出速度
   //  Serial.print(" acceleration = ");
   //  Serial.print(",");
-  if(acceleration < 100000){
-    
-    Serial.print(acceleration);//送出加速度
+  Serial.print(acceleration);//送出加速度
   Serial.println("");
   delay(intervaltime);
-  }
 }
-
-
-
-
-
-//  while (BT.available()) //如果有收到資料
-//  {
-//    startRecieve = true;
-//    val = BT.read(); //每次接收一個字元
-//    recieveData += val; //字元組成字串
-//    BT.write(byte(val)); //把每次收到的字元轉成byte封包傳至手機端
-//    delay(200);  //每次傳輸間隔，如果太短會造成資料遺失或亂碼
-//  }
-//
-//  if (startRecieve)
-//  {
-//    startRecieve = false;
-//    Serial.println(recieveData); //呈現收到字串
-//    recieveData = "";
-//  }
-//
-//  BT.write(Serial.read());
-//  delay(300);
